@@ -14,6 +14,13 @@ export interface PBRMaps {
   roughnessMap: THREE.CanvasTexture;
 }
 
+function getTextureResolution(): number {
+  if (typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches) {
+    return 512;
+  }
+  return 1024;
+}
+
 function makeCanvas(w: number, h: number) {
   const c = document.createElement("canvas");
   c.width = w;
@@ -93,7 +100,7 @@ function grayCanvas(values: Float32Array, w: number, h: number): HTMLCanvasEleme
 /* ------------------------------------------------------------------ */
 
 export function makeWallMaps(seed: number): PBRMaps {
-  const S = 1024;
+  const S = getTextureResolution();
   const rng = mulberry32(seed);
   const n1 = new ValueNoise(seed + 1);
   const n2 = new ValueNoise(seed + 2);
@@ -214,7 +221,7 @@ export function makeWallMaps(seed: number): PBRMaps {
 /* ------------------------------------------------------- */
 
 export function makeCarpetMaps(seed: number): PBRMaps {
-  const S = 1024; // covers 2m x 2m
+  const S = getTextureResolution(); // covers 2m x 2m
   const rng = mulberry32(seed);
   const n1 = new ValueNoise(seed + 11);
   const n2 = new ValueNoise(seed + 12);
@@ -280,7 +287,7 @@ export function makeCarpetMaps(seed: number): PBRMaps {
 /* ----------------------------------------------------------- */
 
 export function makeCeilingMaps(seed: number): PBRMaps {
-  const S = 1024; // covers 2.4m x 2.4m => 4 tiles of 0.6m
+  const S = getTextureResolution(); // covers 2.4m x 2.4m => 4 tiles of 0.6m
   const rng = mulberry32(seed);
   const n1 = new ValueNoise(seed + 21);
 
@@ -870,7 +877,7 @@ export function makeWallArtTexture(seed: number): THREE.CanvasTexture {
 /* ------------------------------------------------------------------ */
 
 export function makeConcreteWallMaps(seed: number): PBRMaps {
-  const S = 1024;
+  const S = getTextureResolution();
   const n1 = new ValueNoise(seed + 11);
   const n2 = new ValueNoise(seed + 12);
 
@@ -904,7 +911,7 @@ export function makeConcreteWallMaps(seed: number): PBRMaps {
 }
 
 export function makeConcreteFloorMaps(seed: number): PBRMaps {
-  const S = 1024;
+  const S = getTextureResolution();
   const n1 = new ValueNoise(seed + 21);
 
   const { canvas, ctx } = makeCanvas(S, S);

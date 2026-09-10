@@ -139,8 +139,8 @@ export class Engine {
     public levelIndex: number = 0,
     seed = (Date.now() ^ (Math.random() * 0xffffff)) >>> 0,
   ) {
-    const width = container.clientWidth;
-    const height = container.clientHeight;
+    const width = Math.max(10, container.clientWidth || (typeof window !== "undefined" ? window.innerWidth : 800));
+    const height = Math.max(10, container.clientHeight || (typeof window !== "undefined" ? window.innerHeight : 600));
 
     this.renderer = new THREE.WebGLRenderer({
       canvas,
@@ -402,8 +402,8 @@ export class Engine {
       }
     };
     const onResize = () => {
-      const w = this.container.clientWidth;
-      const h = this.container.clientHeight;
+      const w = Math.max(10, this.container.clientWidth || (typeof window !== "undefined" ? window.innerWidth : 800));
+      const h = Math.max(10, this.container.clientHeight || (typeof window !== "undefined" ? window.innerHeight : 600));
       this.player.updateProjection(w / h);
       this.renderer.setSize(w, h, false);
       this.fx.setSize(w, h, this.renderer.getPixelRatio());
@@ -854,8 +854,9 @@ export class Engine {
 
     // Assign the real point lights to the nearest glowing fixtures.
     candidates.sort((a, b) => a.d - b.d);
-    for (let i = 0; i < POOL_SIZE; i++) {
+    for (let i = 0; i < this.lightPool.length; i++) {
       const light = this.lightPool[i];
+      if (!light) continue;
       const c = candidates[i];
       if (c) {
         light.position.set(c.f.pos.x, c.f.pos.y - 0.18, c.f.pos.z);
