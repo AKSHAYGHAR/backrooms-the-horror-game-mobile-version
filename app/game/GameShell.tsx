@@ -69,14 +69,34 @@ export default function GameShell() {
   const [currentLevel, setCurrentLevel] = useState(0);
   const isTouch = useMediaQuery("(pointer: coarse)");
   const portrait = useMediaQuery("(orientation: portrait)");
-  const [ignorePortrait, setIgnorePortrait] = useState(false);
   const [mobileSprint, setMobileSprint] = useState(false);
+  // Force-landscape: on touch + portrait, rotate the entire UI 90deg via CSS
+  const forceRotate = isTouch && portrait;
 
   // Automatically default to "normal" (optimized) graphics on mobile devices
   useEffect(() => {
     if (isTouch) {
       setSettings((prev) => (prev.quality === "high" ? { ...prev, quality: "normal" } : prev));
     }
+  }, [isTouch]);
+
+  // On mount, try to lock orientation to landscape (best-effort)
+  useEffect(() => {
+    if (!isTouch) return;
+    const tryLock = async () => {
+      try {
+        // Fullscreen is required for orientation lock on most browsers
+        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen({ navigationUI: "hide" });
+        }
+        const o = screen.orientation as ScreenOrientation & { lock?: (o: string) => Promise<void> };
+        if (o?.lock) await o.lock("landscape");
+      } catch { /* silently fail — CSS force-rotate is the fallback */ }
+    };
+    // Attempt on first user interaction (click/touch)
+    const handler = () => { tryLock(); document.removeEventListener("pointerdown", handler); };
+    document.addEventListener("pointerdown", handler, { once: true });
+    return () => document.removeEventListener("pointerdown", handler);
   }, [isTouch]);
 
   const [showTutorial, setShowTutorial] = useState(false);
@@ -205,6 +225,15 @@ export default function GameShell() {
     }
   };
 
+  // Trigger a resize event after force-rotate so the engine picks up the new dimensions
+  useEffect(() => {
+    if (isTouch) {
+      // Small delay so the CSS transform applies before the engine measures
+      const id = setTimeout(() => window.dispatchEvent(new Event("resize")), 120);
+      return () => clearTimeout(id);
+    }
+  }, [isTouch, portrait]);
+
   const begin = () => {
     attemptOrientationLock();
     engineRef.current?.start();
@@ -242,46 +271,32 @@ export default function GameShell() {
     return `${m}:${s.toString().padStart(2, "0")}`;
   }, [stats.seconds]);
 
+  // When force-rotating, we swap width/height so children render in "landscape" dimensions
+  const forceRotateStyle: React.CSSProperties = forceRotate
+    ? {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vh",   // swap: use viewport height as width
+        height: "100vw",  // swap: use viewport width as height
+        transform: "rotate(90deg)",
+        transformOrigin: "top left",
+        marginLeft: "100vw", // push it back into view after rotation
+        overflow: "hidden",
+      }
+    : {};
+
   return (
-    <div className="fixed inset-0 select-none overflow-hidden bg-black">
+    <div
+      className="fixed inset-0 select-none overflow-hidden bg-black"
+      style={forceRotateStyle}
+    >
       <GameCanvas key={runId} callbacksRef={callbacksRef} onReady={handleReady} levelIndex={currentLevel} />
 
       {/* dev/cheat toast — sits above everything */}
       {toast && (
         <div className="font-elite pointer-events-none absolute left-1/2 top-[8%] z-20 -translate-x-1/2 border border-emerald-200/20 bg-black/80 px-5 py-2 text-[12px] tracking-[0.25em] text-emerald-100/90 shadow-[0_0_30px_rgba(0,0,0,0.8)]">
           {toast}
-        </div>
-      )}
-
-      {/* orientation overlay for mobile portrait — guides player to rotate phone */}
-      {isTouch && portrait && !ignorePortrait && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95 p-6 text-center backdrop-blur-md select-none">
-          <div className="relative mb-6 flex h-24 w-24 items-center justify-center">
-            <div className="phone-spin h-20 w-12 rounded-xl border-2 border-amber-100/80 bg-amber-100/10 shadow-[0_0_25px_rgba(255,225,150,0.25)] flex flex-col items-center justify-between py-2">
-              <div className="h-1 w-3 rounded-full bg-amber-100/50" />
-              <div className="h-2 w-2 rounded-full border border-amber-100/40" />
-            </div>
-          </div>
-          <h2 className="font-elite text-2xl tracking-[0.25em] text-amber-50 mb-3 [text-shadow:0_0_15px_rgba(255,220,150,0.4)]">
-            ROTATE YOUR PHONE
-          </h2>
-          <p className="font-elite max-w-xs text-xs tracking-[0.2em] text-amber-100/70 mb-8 leading-relaxed">
-            THE BACKROOMS IS BEST EXPERIENCED IN LANDSCAPE MODE FOR FULL HORROR IMMERSION.
-          </p>
-          <div className="flex flex-col gap-3.5 w-full max-w-xs">
-            <button
-              onClick={requestLandscapeFullscreen}
-              className="font-elite border border-amber-100/80 bg-amber-100/20 px-6 py-3.5 text-xs tracking-[0.3em] text-amber-50 hover:bg-amber-100/30 transition-all shadow-[0_0_20px_rgba(255,230,160,0.2)] active:scale-95"
-            >
-              ROTATE & FULLSCREEN
-            </button>
-            <button
-              onClick={() => setIgnorePortrait(true)}
-              className="font-elite text-[11px] tracking-[0.25em] text-amber-100/50 hover:text-amber-100/80 py-2 transition-colors"
-            >
-              CONTINUE IN PORTRAIT
-            </button>
-          </div>
         </div>
       )}
 
