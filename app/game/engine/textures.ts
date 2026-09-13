@@ -16,7 +16,7 @@ export interface PBRMaps {
 
 function getTextureResolution(): number {
   if (typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches) {
-    return 512;
+    return 256;
   }
   return 1024;
 }
@@ -479,7 +479,8 @@ export function makePageTexture(seed: number, index: number): THREE.CanvasTextur
 /* ------------------------------- */
 
 export function makeDoorTexture(seed: number): THREE.CanvasTexture {
-  const W = 512, H = 1024;
+  const isMobile = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
+  const W = isMobile ? 256 : 512, H = isMobile ? 512 : 1024;
   const rng = mulberry32(seed + 41);
   const n = new ValueNoise(seed + 42);
   const { canvas, ctx } = makeCanvas(W, H);
@@ -627,7 +628,8 @@ export function makeWaterLabelTexture(seed: number): THREE.CanvasTexture {
 /* --------------------------------------------- */
 
 export function makeEntityMaps(seed: number): PBRMaps {
-  const S = 512;
+  const isMobile = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
+  const S = isMobile ? 256 : 512;
   const n = new ValueNoise(seed + 51);
   const n2 = new ValueNoise(seed + 52);
   const { canvas, ctx } = makeCanvas(S, S);

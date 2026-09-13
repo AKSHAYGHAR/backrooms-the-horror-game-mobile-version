@@ -19,8 +19,8 @@ export default function GameCanvas({ callbacksRef, onReady, levelIndex = 0 }: Pr
     if (!container || !canvas) return;
 
     let engine: Engine | null = null;
-    // Defer construction one frame so the menu paints before level generation.
-    const raf = requestAnimationFrame(() => {
+    // Defer construction so the menu paints before level generation.
+    const raf = setTimeout(() => {
       try {
         engine = new Engine(container, canvas, {
           onState: (s) => callbacksRef.current?.onState(s),
@@ -43,7 +43,7 @@ export default function GameCanvas({ callbacksRef, onReady, levelIndex = 0 }: Pr
     });
 
     return () => {
-      cancelAnimationFrame(raf);
+      clearTimeout(raf);
       engine?.dispose();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- engine lives for the lifetime of this mount (keyed remount per run)
