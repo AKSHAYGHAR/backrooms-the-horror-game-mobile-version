@@ -480,13 +480,18 @@ export class Level {
           : rng() < 0.045
             ? "flicker"
             : "on";
+        // Level 0: 50% area red lights, 50% normal yellow
+        const isRedZone = this.levelIndex === 0 && x < S / 2;
+        const base: [number, number, number] = isRedZone
+          ? [2.2, 0.3, 0.2]   // deep red
+          : [1.9, 1.75, 1.35]; // normal yellow
         this.fixtures.push({
           index: fi++,
           pos: new THREE.Vector3(this.worldX(x), WALL_H - 0.02, this.worldZ(z)),
           state,
           aura: 0,
           phase: rng() * 100,
-          base: [1.9, 1.75, 1.35],
+          base,
         });
       }
     }
