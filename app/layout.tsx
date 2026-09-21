@@ -21,6 +21,9 @@ const specialElite = localFont({
 const SITE = "https://backroom-escape.vercel.app";
 
 export const metadata: Metadata = {
+  authors: [{ name: "Akshay ghar" }],
+  creator: "Akshay ghar",
+  publisher: "Akshay ghar",
   // Absolute base so og:image/twitter:image resolve for social scrapers.
   metadataBase: new URL(SITE),
   // Search-facing title (what people actually type: "backrooms game",
@@ -77,8 +80,12 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "VideoGame",
   name: "Backrooms: Level 0",
+  author: {
+    "@type": "Person",
+    name: "Akshay ghar"
+  },
   url: SITE,
-  image: `${SITE}/opengraph-image.png`,
+  image: `${SITE}/opengraph-image.jpg`,
   description:
     "Free first-person horror game in the browser. Explore a procedurally generated Backrooms maze, collect the 8 pages and escape — while something hunts you by sound.",
   genre: ["Horror", "Survival"],

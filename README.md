@@ -1,5 +1,7 @@
 # BACKROOMS — LEVEL 0
 
+**Developed by Akshay ghar**
+
 A first-person survival horror game that runs entirely in the browser.
 Built with **Next.js + Three.js**. Every asset — textures, the monster, the
 level, every sound — is **generated procedurally at runtime**. There are no

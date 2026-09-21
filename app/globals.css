@@ -117,6 +117,187 @@ body {
   61%, 100% { transform: translateY(100vh); opacity: 0; }
 }
 
+/* ------------------------------------------------------------------ */
+/* PREMIUM HORROR MENU EFFECTS                                         */
+/* ------------------------------------------------------------------ */
+
+/* Slow creepy zoom + pan on background image */
+.bg-creepy-zoom {
+  will-change: transform;
+  animation: creepy-zoom 25s ease-in-out infinite alternate;
+}
+
+@keyframes creepy-zoom {
+  0% { transform: scale(1) translate3d(0, 0, 0); }
+  33% { transform: scale(1.08) translate3d(-1%, 1%, 0); }
+  66% { transform: scale(1.12) translate3d(1%, -0.5%, 0); }
+  100% { transform: scale(1.05) translate3d(-0.5%, 0.5%, 0); }
+}
+
+/* Pulsing dark red vignette overlay */
+.horror-vignette {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    rgba(20, 0, 0, 0.6) 70%,
+    rgba(10, 0, 0, 0.92) 100%
+  );
+  animation: vignette-pulse 4s ease-in-out infinite;
+}
+
+@keyframes vignette-pulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+/* ------------------------------------------------------------------ */
+/* FLOATING DUST PARTICLES                                              */
+/* ------------------------------------------------------------------ */
+.dust-particle {
+  background: rgba(255, 220, 150, 0.6);
+  box-shadow: 0 0 6px rgba(255, 200, 100, 0.3);
+  animation: dust-float linear infinite;
+}
+
+@keyframes dust-float {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  10% { opacity: 0.4; }
+  50% { transform: translate(60px, -80px) scale(0.7); opacity: 0.25; }
+  90% { opacity: 0.1; }
+  100% { transform: translate(120px, -160px) scale(0.3); opacity: 0; }
+}
+
+/* ------------------------------------------------------------------ */
+/* FOG / SMOKE EFFECT                                                   */
+/* ------------------------------------------------------------------ */
+.fog-effect {
+  background: linear-gradient(
+    to top,
+    rgba(15, 10, 5, 0.85) 0%,
+    rgba(30, 20, 10, 0.4) 35%,
+    rgba(20, 15, 8, 0.15) 60%,
+    transparent 100%
+  );
+  animation: fog-drift 8s ease-in-out infinite alternate;
+}
+
+@keyframes fog-drift {
+  0% { transform: translateX(-2%) scaleY(1); opacity: 0.75; }
+  50% { transform: translateX(2%) scaleY(1.1); opacity: 0.9; }
+  100% { transform: translateX(-1%) scaleY(0.95); opacity: 0.8; }
+}
+
+/* ------------------------------------------------------------------ */
+/* FLICKERING LIGHT                                                     */
+/* ------------------------------------------------------------------ */
+.light-flicker {
+  background: radial-gradient(
+    ellipse at 50% 40%,
+    rgba(255, 200, 100, 0.15) 0%,
+    transparent 65%
+  );
+  animation: light-flicker-anim 2.5s steps(1) infinite;
+}
+
+@keyframes light-flicker-anim {
+  0%, 100% { opacity: 0.6; }
+  5% { opacity: 0; }
+  7% { opacity: 0.9; }
+  9% { opacity: 0.2; }
+  11% { opacity: 0.8; }
+  40% { opacity: 0.5; }
+  42% { opacity: 0; }
+  44% { opacity: 0.85; }
+  70% { opacity: 0.6; }
+  72% { opacity: 0.05; }
+  74% { opacity: 0.95; }
+  76% { opacity: 0.2; }
+  78% { opacity: 0.7; }
+}
+
+/* ------------------------------------------------------------------ */
+/* BLOOD DRIPS                                                          */
+/* ------------------------------------------------------------------ */
+.blood-drip {
+  position: absolute;
+  top: -40px;
+  width: 3px;
+  height: 0;
+  background: linear-gradient(to bottom, rgba(120, 0, 0, 0.9), rgba(80, 0, 0, 0.3));
+  border-radius: 0 0 50% 50%;
+  animation: blood-fall linear infinite;
+}
+
+.blood-drip::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  background: rgba(120, 0, 0, 0.8);
+  border-radius: 50%;
+}
+
+.blood-drip-1 { left: 12%; animation-duration: 6s; animation-delay: 1s; }
+.blood-drip-2 { left: 35%; animation-duration: 8s; animation-delay: 3s; width: 2px; }
+.blood-drip-3 { left: 58%; animation-duration: 7s; animation-delay: 5s; }
+.blood-drip-4 { left: 78%; animation-duration: 9s; animation-delay: 2s; width: 2px; }
+.blood-drip-5 { left: 91%; animation-duration: 7.5s; animation-delay: 4s; }
+
+@keyframes blood-fall {
+  0% { top: -40px; height: 0; opacity: 0; }
+  5% { opacity: 0.8; }
+  10% { height: 50px; }
+  70% { top: 85%; height: 60px; opacity: 0.6; }
+  85% { opacity: 0.2; }
+  100% { top: 105%; height: 30px; opacity: 0; }
+}
+
+/* ------------------------------------------------------------------ */
+/* BREATHING EFFECT (whole screen slow zoom pulse)                       */
+/* ------------------------------------------------------------------ */
+.breathing-effect {
+  will-change: transform;
+  animation: breathing 6s ease-in-out infinite;
+}
+
+@keyframes breathing {
+  0%, 100% { transform: scale(1) translateZ(0); }
+  50% { transform: scale(1.03) translateZ(0); }
+}
+
+/* ------------------------------------------------------------------ */
+/* MONSTER EYES GLOW                                                    */
+/* ------------------------------------------------------------------ */
+.monster-eyes-glow {
+  background: radial-gradient(
+    circle at 62% 42%,
+    rgba(255, 30, 0, 0) 0%,
+    rgba(255, 30, 0, 0) 100%
+  );
+  animation: eyes-glow 8s ease-in-out infinite;
+}
+
+@keyframes eyes-glow {
+  0%, 65%, 100% {
+    background: radial-gradient(circle at 62% 42%, rgba(255, 30, 0, 0) 0%, transparent 8%);
+  }
+  70% {
+    background: radial-gradient(circle at 62% 42%, rgba(255, 60, 0, 0.5) 0%, rgba(255, 20, 0, 0.15) 4%, transparent 8%);
+  }
+  75% {
+    background: radial-gradient(circle at 62% 42%, rgba(255, 40, 0, 0.7) 0%, rgba(255, 10, 0, 0.2) 5%, transparent 10%);
+  }
+  80% {
+    background: radial-gradient(circle at 62% 42%, rgba(255, 60, 0, 0.4) 0%, rgba(255, 20, 0, 0.1) 4%, transparent 8%);
+  }
+  85% {
+    background: radial-gradient(circle at 62% 42%, rgba(255, 30, 0, 0) 0%, transparent 8%);
+  }
+}
+
 .glitch-text {
   animation: glitch-skew 4s infinite;
 }

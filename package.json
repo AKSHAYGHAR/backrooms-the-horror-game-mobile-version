@@ -1,6 +1,7 @@
 {
   "name": "backrooms",
   "version": "0.1.0",
+  "author": "Akshay ghar",
   "private": true,
   "scripts": {
     "dev": "next dev",

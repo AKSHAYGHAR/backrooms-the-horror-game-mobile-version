@@ -452,7 +452,7 @@ export default function GameShell() {
               <div className="flicker-slow font-elite text-[11px] tracking-[0.6em] text-amber-200/40">
                 LEVEL 0
               </div>
-              <h1 className="vhs-title font-elite mt-3 text-6xl tracking-[0.18em] text-amber-50/95 sm:text-7xl">
+              <h1 className="vhs-title font-elite mt-3 text-5xl tracking-[0.15em] text-amber-50/95 sm:text-7xl sm:tracking-[0.18em] md:text-8xl">
                 BACKROOMS
               </h1>
 
@@ -474,9 +474,9 @@ export default function GameShell() {
                   <>
                     <button
                       onClick={begin}
-                      className="font-elite group flex items-center gap-3 bg-amber-100/90 px-10 py-3 text-base tracking-[0.4em] text-black transition-all hover:bg-amber-50 hover:shadow-[0_0_30px_rgba(255,230,170,0.25)]"
+                      className="font-elite group flex items-center gap-3 sm:gap-4 border border-white/80 bg-transparent px-8 py-2.5 sm:px-10 sm:py-3 text-base sm:text-lg tracking-[0.3em] sm:tracking-[0.5em] text-white transition-all duration-500 hover:bg-white hover:text-black hover:shadow-[0_0_40px_rgba(255,255,255,0.5)]"
                     >
-                      <svg viewBox="0 0 10 12" className="h-3 w-3 fill-current" aria-hidden="true">
+                      <svg viewBox="0 0 10 12" className="h-3 w-3 sm:h-4 sm:w-4 fill-current transition-transform duration-500 group-hover:translate-x-2" aria-hidden="true">
                         <path d="M0 0 L10 6 L0 12 Z" />
                       </svg>
                       ENTER
@@ -891,15 +891,36 @@ function Overlay({
         : "bg-[#0a0905]/92";
   return (
     <div className={`absolute inset-0 z-10 ${bg}`}>
-      {vhs && <VHSNoise />}
-      <div className="crt-grain pointer-events-none absolute inset-0 opacity-[0.07]" />
-      <div className="scanlines pointer-events-none absolute inset-0 opacity-[0.05]" />
+      {/* Background image with creepy slow zoom + breathing */}
       {vhs && (
-        <>
-          <div className="tracking-band pointer-events-none absolute inset-x-0 h-32" />
-          <RecOSD />
-        </>
+        <div className="absolute inset-0 overflow-hidden breathing-effect">
+          <img
+            src="/bg-image.jpg"
+            alt=""
+            className="bg-creepy-zoom absolute inset-0 h-full w-full object-cover opacity-70"
+          />
+          {/* Monster eyes glow */}
+          <div className="monster-eyes-glow pointer-events-none absolute inset-0" />
+        </div>
       )}
+      {/* Dark red pulsing vignette */}
+      {vhs && <div className="horror-vignette pointer-events-none absolute inset-0" />}
+      {/* Floating dust particles */}
+      {vhs && <DustParticles />}
+      {/* Fog effect */}
+      {vhs && <div className="fog-effect pointer-events-none absolute inset-x-0 bottom-0 h-[45%]" />}
+      {/* Blood drips */}
+      {vhs && (
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-full overflow-hidden">
+          <div className="blood-drip blood-drip-1" />
+          <div className="blood-drip blood-drip-2" />
+          <div className="blood-drip blood-drip-3" />
+          <div className="blood-drip blood-drip-4" />
+          <div className="blood-drip blood-drip-5" />
+        </div>
+      )}
+      {/* Flickering light overlay */}
+      {vhs && <div className="light-flicker pointer-events-none absolute inset-0" />}
       {/* Scroll layer: on short screens (phone landscape) the menu is taller
           than the viewport — center when it fits, scroll when it doesn't.
           (Flex centering directly on the overflow container would clip the
@@ -909,6 +930,29 @@ function Overlay({
           {children}
         </div>
       </div>
+    </div>
+  );
+}
+
+/** Floating dust particles — lightweight CSS-only */
+function DustParticles() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {Array.from({ length: 30 }).map((_, i) => (
+        <div
+          key={i}
+          className="dust-particle absolute rounded-full"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            width: `${1.5 + Math.random() * 2.5}px`,
+            height: `${1.5 + Math.random() * 2.5}px`,
+            opacity: 0.15 + Math.random() * 0.35,
+            animationDuration: `${12 + Math.random() * 20}s`,
+            animationDelay: `${Math.random() * -20}s`,
+          }}
+        />
+      ))}
     </div>
   );
 }
