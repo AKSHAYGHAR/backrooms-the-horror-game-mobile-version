@@ -103,6 +103,9 @@ const jsonLd = {
   },
 };
 
+import { Providers } from "./providers";
+
+// ... existing code in RootLayout
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -111,36 +114,38 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${specialElite.variable} h-full antialiased`}>
       <body className="h-full overflow-hidden bg-black text-zinc-200">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
-          }}
-        />
-        {children}
-        {/* Vercel-only — the CrazyGames bundle would just spam 404s */}
-        {process.env.CG_EXPORT !== "1" && <Analytics />}
-        {process.env.CG_EXPORT === "1" && (
-          <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
-        )}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').then(
-                    function(registration) {
-                      console.log('ServiceWorker registration successful');
-                    },
-                    function(err) {
-                      console.log('ServiceWorker registration failed: ', err);
-                    }
-                  );
-                });
-              }
-            `,
-          }}
-        />
+        <Providers>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+            }}
+          />
+          {children}
+          {/* Vercel-only — the CrazyGames bundle would just spam 404s */}
+          {process.env.CG_EXPORT !== "1" && <Analytics />}
+          {process.env.CG_EXPORT === "1" && (
+            <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+          )}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                if ('serviceWorker' in navigator) {
+                  window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/sw.js').then(
+                      function(registration) {
+                        console.log('ServiceWorker registration successful');
+                      },
+                      function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                      }
+                    );
+                  });
+                }
+              `,
+            }}
+          />
+        </Providers>
       </body>
     </html>
   );
