@@ -1,8 +1,5 @@
-import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../lib/auth";
-import connectToDatabase from "../../../lib/mongodb";
-import User from "../../../models/User";
 
 export async function POST(req: Request) {
   try {
@@ -17,6 +14,9 @@ export async function POST(req: Request) {
         status: 401,
       });
     }
+
+    const connectToDatabase = (await import("../../../lib/mongodb")).default;
+    const User = (await import("../../../models/User")).default;
 
     await connectToDatabase();
 
