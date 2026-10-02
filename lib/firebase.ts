@@ -1,4 +1,4 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User } from "firebase/auth";
 
 const firebaseConfig = {
@@ -10,20 +10,28 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
+// Lazy-initialize Firebase only when actually needed (prevents build-time crashes)
+function getFirebaseApp(): FirebaseApp {
+  if (getApps().length) return getApp();
+  return initializeApp(firebaseConfig);
+}
+
+function getFirebaseAuth() {
+  return getAuth(getFirebaseApp());
+}
+
 const googleProvider = new GoogleAuthProvider();
 
-export { auth, googleProvider };
-
 export const firebaseSignInWithGoogle = async () => {
+  const auth = getFirebaseAuth();
   const result = await signInWithPopup(auth, googleProvider);
   return result.user;
 };
 
 export const firebaseSignOut = async () => {
+  const auth = getFirebaseAuth();
   await signOut(auth);
 };
 
-export { onAuthStateChanged };
+export { onAuthStateChanged, googleProvider, getFirebaseAuth };
 export type { User };

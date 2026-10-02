@@ -13,8 +13,7 @@ import type { Engine, EngineCallbacks, GameState, HudState, MinimapState } from 
 import Minimap from "./Minimap";
 import { initCrazyGames, cgGameplayStart, cgGameplayStop, showMidgameAd } from "./engine/crazygames";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { onAuthStateChanged, firebaseSignInWithGoogle, firebaseSignOut, User } from "../../lib/firebase";
-import { auth } from "../../lib/firebase";
+import { onAuthStateChanged, firebaseSignInWithGoogle, firebaseSignOut, getFirebaseAuth, User } from "../../lib/firebase";
 const GameCanvas = dynamic(() => import("./GameCanvas"), { ssr: false });
 
 const INITIAL_HUD: HudState = {
@@ -76,7 +75,7 @@ export default function GameShell() {
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(getFirebaseAuth(), (currentUser) => {
       setFirebaseUser(currentUser);
     });
     return () => unsubscribe();
